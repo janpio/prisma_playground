@@ -4,27 +4,97 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client-js"
-  previewFeatures = ["interactiveTransactions", "selectRelationCount"]
+  provider        = "prisma-client-js"
+  previewFeatures = ["interactiveTransactions", "selectRelationCount", "referentialActions"]
 }
 
 model User {
-  id         String   @id @default(uuid()) @db.Uuid
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  is_deleted Boolean  @default(false)
-  username   String   @unique
+  id       String @id @default(uuid()) @db.Uuid
+  username String @unique
 
-  posts Post[]
+  type UserType
+
+  profiles Profile[]
+  tags     Tag[]
+
+  publishedPosts Post[]
+
+  authoredPostContents PostContent[] @relation(name: "PostContentAuthor")
+  editedPostContents   PostContent[] @relation(name: "PostContentEditor")
+
+  @@unique([username, type])
+}
+
+enum UserType {
+  PUBLISHER
+  AUTHOR
+  EDITOR
+}
+
+model Profile {
+  id  String @id @default(uuid()) @db.Uuid
+  bio String
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @db.Uuid
+}
+
+model Tag {
+  id   String @id @default(uuid()) @db.Uuid
+  name String
+
+  type TagType
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @db.Uuid
+
+  posts PostTag[]
+
+  @@unique([name, type, userId])
+}
+
+enum TagType {
+  CATEGORY
+  POSTTYPE
 }
 
 model Post {
-  id         String   @id @default(uuid()) @db.Uuid
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  is_deleted Boolean  @default(false)
-  title      String
+  id    String @id @default(uuid()) @db.Uuid
+  title String
 
-  user   User @relation(fields: [userId], references: [id])
-  userId String   @db.Uuid
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @db.Uuid
+
+  tags     PostTag[]
+  contents PostContent[]
+}
+
+model PostContent {
+  id String @id @default(uuid()) @db.Uuid
+
+  content  String
+  language Language
+
+  post   Post   @relation(fields: [postId], references: [id])
+  postId String @db.Uuid
+
+  author   User   @relation(name: "PostContentAuthor", fields: [authorId], references: [id])
+  authorId String @db.Uuid
+  editor   User   @relation(name: "PostContentEditor", fields: [editorId], references: [id])
+  editorId String @db.Uuid
+}
+
+enum Language {
+  EN
+  ES
+}
+
+model PostTag {
+  post   Post   @relation(fields: [postId], references: [id])
+  postId String @db.Uuid
+
+  tag   Tag    @relation(fields: [tagId], references: [id])
+  tagId String @db.Uuid
+
+  @@id([postId, tagId])
 }

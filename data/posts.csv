@@ -1,0 +1,7 @@
+postId,type,category,title,postContentId,lang,content,writtenBy,editedBy
+"ff79860c-86e6-45c9-ae0d-57701a41dcbc","blog","featured","Post 1","aea6bacf-c03a-4feb-8543-d475618d1000","EN","Hello 1",author1,editor1
+"a7046f3f-47bf-47b8-86c7-78397dd3fbea","blog","featured","Post 2","f77cf9d0-92e4-4d83-b4fd-5fa5eb8dfe04","EN","Hello 2",author1,editor1
+"100b68ef-9ef9-4d11-a254-67d648aad977","video","","Post 3","ee2b27f1-bdcd-40d2-a133-1b1f647c4b0b","ES","Hola 3",author1,editor1
+"3e8f66db-b457-4a7b-b6e4-4dd206b8aa11","blog","","Post 4","f675b45c-0f8a-43cc-bd3a-e6c4fbdede78","EN","Hello 4",author1,editor1
+"3e8f66db-b457-4a7b-b6e4-4dd206b8aa11","blog","","Post 4","2c2369d4-98e9-4452-8330-f8c84209609e","EN","Hola 4",author1,editor1
+"d3b2fa6a-0ba6-4696-9160-af8b2c7bab02","video","featured","Post 5","b6c540b0-009e-4c98-abfa-8a08d38f5345","EN","Hello 5",author1,editor1

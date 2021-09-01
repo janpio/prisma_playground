@@ -1,43 +1,125 @@
-import { PrismaClient, } from '@prisma/client';
+import { PrismaClient, TagType, UserType } from '@prisma/client';
+import { tagIds, userIds } from '../constants';
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({
+  log: [
+    {
+      emit: 'stdout',
+      level: 'query',
+    },
+    {
+      emit: 'stdout',
+      level: 'error',
+    },
+    {
+      emit: 'stdout',
+      level: 'info',
+    },
+    {
+      emit: 'stdout',
+      level: 'warn',
+    },
+  ],
+});
 
 const main = async () => {
-  const test = await prisma.user.upsert({
-    where: {
-      id: '62edd1de-868b-4698-b802-b7eb030ace4e',
-    },
-    update: {},
-    create: {
-      id: '62edd1de-868b-4698-b802-b7eb030ace4e',
-      username: 'test',
-      posts: {
-        connectOrCreate: [
-          {
-            where: {
-              id: '310d6bd1-1d57-4e4d-81f0-30ee20d76e9e'
+  // create users
+  const users = await Promise.all([
+    prisma.user.upsert({
+      where: {
+        id: userIds.publisher1,
+      },
+      update: {},
+      create: {
+        id: userIds.publisher1,
+        username: 'publisher1',
+        type: UserType.PUBLISHER,
+        tags: {
+          connectOrCreate: [
+            {
+              where: {
+                id: tagIds.postType.blog,
+              },
+              create: {
+                id: tagIds.postType.blog,
+                name: 'blog',
+                type: TagType.POSTTYPE,
+              },
             },
-            create: {
-              id: '310d6bd1-1d57-4e4d-81f0-30ee20d76e9e',
-              title: 'post 1',
+            {
+              where: {
+                id: tagIds.postType.video,
+              },
+              create: {
+                id: tagIds.postType.video,
+                name: 'video',
+                type: TagType.POSTTYPE,
+              },
             },
-          },  {
-            where: {
-              id: '3c4ee0ef-d73d-4ced-b24a-8433c47e8f9a'
+            {
+              where: {
+                id: tagIds.category.featured,
+              },
+              create: {
+                id: tagIds.category.featured,
+                name: 'featured',
+                type: TagType.CATEGORY,
+              },
             },
-            create: {
-              id: '3c4ee0ef-d73d-4ced-b24a-8433c47e8f9a',
-              title: 'post 2',
-            },
-          }
-        ]
-      }
-    }
-  });
+          ],
+        },
+      },
+    }),
+    prisma.user.upsert({
+      where: {
+        id: userIds.author1,
+      },
+      update: {},
+      create: {
+        id: userIds.author1,
+        username: 'author1',
+        type: UserType.AUTHOR,
+      },
+    }),
+    prisma.user.upsert({
+      where: {
+        id: userIds.author2,
+      },
+      update: {},
+      create: {
+        id: userIds.author2,
+        username: 'author2',
+        type: UserType.AUTHOR,
+      },
+    }),
+    prisma.user.upsert({
+      where: {
+        id: userIds.editor1,
+      },
+      update: {},
+      create: {
+        id: userIds.editor1,
+        username: 'editor1',
+        type: UserType.EDITOR,
+      },
+    }),
+    prisma.user.upsert({
+      where: {
+        id: userIds.editor2,
+      },
+      update: {},
+      create: {
+        id: userIds.editor2,
+        username: 'editor2',
+        type: UserType.EDITOR,
+      },
+    }),
+  ]);
+
 };
 
 main()
-  .catch((e) => {
+  .catch(e => {
     console.error(e);
     process.exit(1);
   })
